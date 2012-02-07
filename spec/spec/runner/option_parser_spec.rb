@@ -527,23 +527,29 @@ describe "OptionParser" do
     include FakeFS::SpecHelpers
 
     it "uses spec/spec.opts if present" do
-      File.open('spec/spec.opts', 'w') { |f| f.write "--colour" }
-      options = parse(['ignore.rb'])
-      options.colour.should be(true)
+      system("cd spec") do
+        File.open('spec.opts', 'w') { |f| f.write "--colour" }
+        options = parse(['ignore.rb'])
+        options.colour.should be(true)
+      end
     end
   
     it "does not try to load spec/spec.opts if not present" do
-      FileUtils.rm 'spec/spec.opts'
-      options = parse(['ignore.rb'])
-      options.colour.should be(false)
+      system("cd spec") do
+        FileUtils.rm 'spec.opts'
+        options = parse(['ignore.rb'])
+        options.colour.should be(false)
+      end
     end
   
     it "uses specified opts if supplied" do
-      options = nil
-      File.open("spec/spec.opts",'w') { |f| f.write "" }
-      File.open("spec/alternate.opts",'w') { |f| f.write "--colour" }
-      options = parse(['-O','spec/alternate.opts'])
-      options.colour.should be(true)
+      system("cd spec") do
+        options = nil
+        File.open("spec.opts",'w') { |f| f.write "" }
+        File.open("alternate.opts",'w') { |f| f.write "--colour" }
+        options = parse(['-O','spec/alternate.opts'])
+        options.colour.should be(true)
+      end
     end
   end
   
